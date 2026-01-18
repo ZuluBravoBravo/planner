@@ -1,1 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Meal Planner</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  h1, h2 { text-align: center; }
+  .day-selector, #standalone-section { margin-bottom: 15px; }
+  label { font-weight: bold; margin-right: 10px; }
+  select { padding: 5px; }
+  #generate-btn { display: block; margin: 20px auto; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  #output { margin-top: 40px; }
+  .shopping-list, .recipe { margin-bottom: 40px; }
+  .recipe { page-break-before: always; }
+  ul { list-style-type: disc; margin-left: 20px; }
+</style>
+</head>
+<body>
+<h1>Weekly Meal Planner</h1>
 
+<div id="selectors">
+  <div class="day-selector">
+    <label for="monday">Monday:</label>
+    <select id="monday"></select>
+  </div>
+  <div class="day-selector">
+    <label for="tuesday">Tuesday:</label>
+    <select id="tuesday"></select>
+  </div>
+  <div class="day-selector">
+    <label for="wednesday">Wednesday:</label>
+    <select id="wednesday"></select>
+  </div>
+  <div class="day-selector">
+    <label for="thursday">Thursday:</label>
+    <select id="thursday"></select>
+  </div>
+  <div class="day-selector">
+    <label for="friday">Friday:</label>
+    <select id="friday"></select>
+  </div>
+  <div class="day-selector">
+    <label for="saturday">Saturday:</label>
+    <select id="saturday"></select>
+  </div>
+  <div class="day-selector">
+    <label for="sunday">Sunday:</label>
+    <select id="sunday"></select>
+  </div>
+</div>
+
+<div id="standalone-section">
+  <label for="standalone-select">Add individual items:</label>
+  <select id="standalone-select" multiple></select>
+</div>
+
+<button id="generate-btn">Generate Recipes & Shopping List</button>
+
+<div id="output">
+  <div class="shopping-list" id="shopping-list"></div>
+  <div class="recipes" id="recipes"></div>
+</div>
+
+<script>
+// -----------------------------
+// Sample Recipes
+// -----------------------------
+const recipes = [
+  {
+    name: "Winter Minestrone Soup",
+    ingredients: [
+      { name: "onion", amount: 1, unit: "each", category: "vegetable" },
+      { name: "celery", amount: 1, unit: "stalk", category: "vegetable" },
+      { name: "fennel", amount: 1, unit: "bulb", category: "vegetable" },
+      { name: "yukon gold potatoes", amount: 2, unit: "each", category: "vegetable" },
+      { name: "garlic", amount: 2, unit: "cloves", category: "vegetable" },
+      { name: "olive oil", amount: 1, unit: "tbsp", category: "pantry" },
+      { name: "crushed whole tomatoes", amount: 1, unit: "can", category: "pantry" },
+      { name: "vegetable broth", amount: 8, unit: "cups", category: "pantry" },
+      { name: "cannellini beans", amount: 1, unit: "can", category: "pantry" },
+      { name: "red wine vinegar", amount: 2, unit: "tsp", category: "pantry" },
+      { name: "swiss chard", amount: 1.5 , unit: "bunch", category: "vegetable" },
+      { name: "short pasta", amount: 2, unit: "cups", category: "pantry" },
+      { name: "grated parmesan cheese", amount: 1, unit: "cup", category: "dairy" },
+      { name: "salt", amount: 1, unit: "pinch", category: "pantry" },
+      { name: "pepper", amount: 1, unit: "pinch", category: "pantry" }
+    ],
+    instructions: `PREP
+get out a large stock pot
+cut half an onion into 1/2 inch pieces
+slice celery crossways into 1/2 inch pieces
+cut half a bulb of fennel into 1 inch pieces
+peel and cut potatos into 1 inch cubes
+thinly slice the swiss chard
+finely chop garlic
+Open cannelli beans
+
+Heat oil in a large stock pot over medium high heat
+add onion celery fennel potatoes and garlic
+cook stirring occasionally about 5 minutes
+add tomatoes and their juices stock and Kennelly beans
+season with two teaspoons salt and half a teaspoon pepper
+increase heat to high and bring to a boil
+reduce heat to a simmer and cook until potatoes are tender about 10 minutes
+stir in vinegar and swiss chard season with salt and pepper
+prepare the pasta to Al Dente by following the directions included with the pasta
+divide pasta evenly between bowls
+little soup over the pasta and garnish with cheese`
+  },
+  {
+    name: "Omelette",
+    ingredients: [
+      { name: "egg", amount: 3, unit: "each", category: "dairy" },
+      { name: "milk", amount: 0.25, unit: "cup", category: "dairy" },
+      { name: "cheddar cheese", amount: 2, unit: "oz", category: "dairy" },
+      { name: "salt", amount: 1, unit: "tsp", category: "pantry" }
+    ],
+    instructions: "Beat eggs and milk, heat pan, pour eggs, add cheese, fold and serve."
+  }
+];
+
+// -----------------------------
+// Standalone items (not part of a recipe)
+// -----------------------------
+const standaloneItems = [
+  { name: "milk", amount: 1, unit: "cup", category: "staples" },
+  { name: "cereal", amount: 1, unit: "box", category: "staples" },
+  { name: "bread", amount: 1, unit: "loaf", category: "staples" },
+  { name: "butter", amount: 1, unit: "lb", category: "dairy" }
+];
+
+// -----------------------------
+// Unit conversion tables
+// -----------------------------
+const volumeToTsp = { tsp:1, tbsp:3, cup:48, pint:96, quart:192 };
+const weightToOz = { oz:1, lb:16 };
+
+// -----------------------------
+// Convert decimal to simplified fraction
+// -----------------------------
+function gcd(a,b){return b===0?a:gcd(b,a%b);}
+function toMixedFraction(value){
+  const whole=Math.floor(value),frac=value-whole;
+  if(frac===0) return `${whole}`;
+  const denominators=[2,3,4,6,8,12,16];
+  let bestNumerator=1,bestDenominator=2,minError=Infinity;
+  for(let d of denominators){
+    let n=Math.round(frac*d),error=Math.abs(frac-n/d);
+    if(error<minError && n>0){minError=n;bestDenominator=d;minError=error;}
+  }
+  const divisor=gcd(bestNumerator,bestDenominator);
+  const numerator=bestNumerator/divisor;
+  const denominator=bestDenominator/divisor;
+  if(whole===0) return `${numerator}/${denominator}`;
+  return `${whole} ${numerator}/${denominator}`;
+}
+
+// -----------------------------
+// Generate shopping list
+// -----------------------------
+function generateShoppingList(allIngredients){
+  const totals={};
+
+  allIngredients.forEach(ing=>{
+    let amount=ing.amount,unit=ing.unit;
+    if(volumeToTsp[unit]){amount*=volumeToTsp[unit];unit="tsp";}
+    else if(weightToOz[unit]){amount*=weightToOz[unit];unit="oz";}
+    if(!totals[ing.name]) totals[ing.name]={amount:0,unit,category:ing.category||"other"};
+    totals[ing.name].amount+=amount;
+  });
+
+  // Group by category, then sort alphabetically
+  const categories={};
+  for(let ing in totals){
+    const {amount,unit,category}=totals[ing];
+    if(!categories[category]) categories[category]=[];
+    categories[category].push({name:ing,amount,unit});
+  }
+
+  const shoppingList=[];
+  Object.keys(categories).sort().forEach(cat=>{
+    shoppingList.push(`<strong>${cat}</strong>`);
+    categories[cat].sort((a,b)=>a.name.localeCompare(b.name)).forEach(i=>{
+      if(i.unit==="tsp"){
+        let cups=Math.floor(i.amount/volumeToTsp.cup);i.amount-=cups*volumeToTsp.cup;
+        let tbsp=Math.floor(i.amount/volumeToTsp.tbsp);i.amount-=tbsp*volumeToTsp.tbsp;
+        let tsp=i.amount;let parts=[];
+        if(cups) parts.push(`${cups} cup`);
+        if(tbsp) parts.push(`${tbsp} tbsp`);
+        if(tsp) parts.push(`${toMixedFraction(tsp)} tsp`);
+        shoppingList.push(`${i.name}: ${parts.join(" + ")}`);
+      } else if(i.unit==="oz"){
+        let lbs=Math.floor(i.amount/weightToOz.lb);i.amount-=lbs*weightToOz.lb;
+        let oz=i.amount;let parts=[];
+        if(lbs) parts.push(`${lbs} lb`);
+        if(oz) parts.push(`${toMixedFraction(oz)} oz`);
+        shoppingList.push(`${i.name}: ${parts.join(" + ")}`);
+      } else shoppingList.push(`${i.name}: ${toMixedFraction(i.amount)} ${i.unit}`);
+    });
+  });
+
+  return shoppingList;
+}
+
+// -----------------------------
+// UI Logic
+// -----------------------------
+document.addEventListener("DOMContentLoaded",()=>{
+  const days=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+
+  // Populate recipe dropdowns
+  days.forEach(day=>{
+    const select=document.getElementById(day);
+    recipes.forEach(r=>{
+      const option=document.createElement("option");
+      option.value=r.name;
+      option.textContent=r.name;
+      select.appendChild(option);
+    });
+  });
+
+  // Populate standalone items
+  const standaloneSelect=document.getElementById("standalone-select");
+  standaloneItems.forEach(item=>{
+    const option=document.createElement("option");
+    option.value=item.name;
+    option.textContent=`${item.name} (${item.unit})`;
+    standaloneSelect.appendChild(option);
+  });
+
+  // Generate button
+  document.getElementById("generate-btn").addEventListener("click",()=>{
+    const selectedRecipes=[];
+    days.forEach(day=>{
+      const select=document.getElementById(day);
+      const recipe=recipes.find(r=>r.name===select.value);
+      if(recipe) selectedRecipes.push(recipe);
+    });
+
+    // Selected standalone items
+    const selectedStandalone=Array.from(standaloneSelect.selectedOptions)
+      .map(opt=>standaloneItems.find(item=>item.name===opt.value));
+
+    const allIngredients=[...selectedRecipes.flatMap(r=>r.ingredients),...selectedStandalone];
+
+    // Shopping list
+    const shopping=generateShoppingList(allIngredients);
+    document.getElementById("shopping-list").innerHTML="<h2>Shopping List</h2><ul>"+shopping.map(i=>`<li>${i}</li>`).join("")+"</ul>";
+
+    // Recipes
+    const recipesDiv=document.getElementById("recipes");
+    recipesDiv.innerHTML="<h2>Recipes</h2>";
+    selectedRecipes.forEach(r=>{
+      const div=document.createElement("div");
+      div.className="recipe";
+      let html=`<h3>${r.name}</h3><h4>Ingredients</h4><ul>`;
+      r.ingredients.forEach(ing=>{
+        html+=`<li>${toMixedFraction(ing.amount)} ${ing.unit} ${ing.name}</li>`;
+      });
+      html+="</ul><h4>Instructions</h4>";
+      r.instructions.split("\n").forEach(step=>{
+        if(step.trim()==="") html+="<br>"; else html+=`<p>${step.trim()}</p>`;
+      });
+      div.innerHTML=html;
+      recipesDiv.appendChild(div);
+    });
+  });
+});
+</script>
+</body>
+</html>
