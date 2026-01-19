@@ -1,339 +1,299 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>planner</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 20px; }
-  h1, h2 { text-align: center; }
-  .day-selector, #standalone-section { margin-bottom: 15px; }
-  label { font-weight: bold; margin-right: 10px; }
-  select { padding: 5px; }
-  #generate-btn, #print-btn {
-    display: block;
-    margin: 15px auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  #output { margin-top: 40px; }
-  .shopping-list, .recipe { margin-bottom: 40px; }
-  .recipe { page-break-before: always; }
-  ul { list-style-type: disc; margin-left: 20px; }
-  .checkbox-group label { font-weight: normal; display: block; }
-</style>
+  <meta charset="UTF-8" />
+  <title>Weekly Meal Planner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      max-width: 900px;
+    }
+
+    h1, h2, h3 {
+      margin-top: 1.5em;
+    }
+
+    .planner-grid {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+      max-width: 500px;
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 8px 14px;
+      font-size: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .category {
+      margin-bottom: 12px;
+    }
+
+    .category ul {
+      margin: 4px 0 0 20px;
+    }
+
+    .recipe-card {
+      margin-bottom: 24px;
+    }
+
+    .recipe-card ul {
+      margin-left: 20px;
+    }
+
+    /* ---------- PRINT RULES ---------- */
+    @media print {
+      .controls {
+        display: none;
+      }
+
+      .print-page {
+        page-break-before: always;
+      }
+
+      body {
+        margin: 0.75in;
+      }
+    }
+  </style>
 </head>
 <body>
-<h1>Weekly Meal Planner</h1>
 
-<div id="selectors">
-  <div class="day-selector">
-    <label for="monday">Monday:</label>
-    <select id="monday"></select>
+  <h1>Weekly Meal Planner</h1>
+
+  <!-- ================= CONTROLS (NOT PRINTED) ================= -->
+  <div class="controls">
+    <div class="planner-grid">
+      <label for="monday">Monday</label>
+      <select id="monday"></select>
+
+      <label for="tuesday">Tuesday</label>
+      <select id="tuesday"></select>
+
+      <label for="wednesday">Wednesday</label>
+      <select id="wednesday"></select>
+
+      <label for="thursday">Thursday</label>
+      <select id="thursday"></select>
+
+      <label for="friday">Friday</label>
+      <select id="friday"></select>
+
+      <label for="saturday">Saturday</label>
+      <select id="saturday"></select>
+
+      <label for="sunday">Sunday</label>
+      <select id="sunday"></select>
+    </div>
+
+    <button id="generateBtn">Generate Plan</button>
+    <button id="printBtn">Print / Save PDF</button>
   </div>
-  <div class="day-selector">
-    <label for="tuesday">Tuesday:</label>
-    <select id="tuesday"></select>
+
+  <!-- ================= SHOPPING LIST PAGE ================= -->
+  <div id="shoppingPage" class="print-page hidden">
+    <h2>Shopping List</h2>
+
+    <div id="shoppingList"></div>
   </div>
-  <div class="day-selector">
-    <label for="wednesday">Wednesday:</label>
-    <select id="wednesday"></select>
-  </div>
-  <div class="day-selector">
-    <label for="thursday">Thursday:</label>
-    <select id="thursday"></select>
-  </div>
-  <div class="day-selector">
-    <label for="friday">Friday:</label>
-    <select id="friday"></select>
-  </div>
-  <div class="day-selector">
-    <label for="saturday">Saturday:</label>
-    <select id="saturday"></select>
-  </div>
-  <div class="day-selector">
-    <label for="sunday">Sunday:</label>
-    <select id="sunday"></select>
-  </div>
-</div>
 
-<div id="standalone-section">
-  <h3>Add individual items:</h3>
-  <div id="checkboxes" class="checkbox-group"></div>
-</div>
+  <!-- ================= RECIPES PAGES ================= -->
+  <div id="recipesPages"></div>
 
-<button id="generate-btn">Generate Recipes & Shopping List</button>
-<button id="print-btn">Print / Save as PDF</button>
-
-<div id="output">
-  <div class="shopping-list" id="shopping-list"></div>
-  <div class="recipes" id="recipes"></div>
-</div>
-
-<script>
-// -----------------------------
-// Sample Recipes
-// -----------------------------
-const recipes = [
-  {
-    name: "Winter Minestrone Soup",
-    ingredients: [
-      { name: "onion", amount: 1, unit: "each", category: "Produce" },
-      { name: "celery", amount: 1, unit: "stalk", category: "Produce" },
-      { name: "fennel", amount: 1, unit: "bulb", category: "Produce" },
-      { name: "yukon gold potatoes", amount: 2, unit: "each", category: "Produce" },
-      { name: "garlic", amount: 2, unit: "cloves", category: "Produce" },
-      { name: "olive oil", amount: 1, unit: "tbsp", category: "Pantry" },
-      { name: "crushed whole tomatoes", amount: 1, unit: "can", category: "Pantry" },
-      { name: "vegetable broth", amount: 8, unit: "cups", category: "Pantry" },
-      { name: "cannellini beans", amount: 1, unit: "can", category: "Pantry" },
-      { name: "red wine vinegar", amount: 2, unit: "tsp", category: "Pantry" },
-      { name: "swiss chard", amount: 1.5 , unit: "bunch", category: "Produce" },
-      { name: "short pasta", amount: 2, unit: "cups", category: "Grains" },
-      { name: "grated parmesan cheese", amount: 1, unit: "cup", category: "Dairy" },
-      { name: "salt", amount: 1, unit: "pinch", category: "Pantry" },
-      { name: "pepper", amount: 1, unit: "pinch", category: "Pantry" }
-    ],
-    instructions: `PREP
-get out a large stock pot
-cut half an onion into 1/2 inch pieces
-slice celery crossways into 1/2 inch pieces
-cut half a bulb of fennel into 1 inch pieces
-peel and cut potatos into 1 inch cubes
-thinly slice the swiss chard
-finely chop garlic
-Open cannelli beans
-
-Heat oil in a large stock pot over medium high heat
-add onion celery fennel potatoes and garlic
-cook stirring occasionally about 5 minutes
-add tomatoes and their juices stock and Kennelly beans
-season with two teaspoons salt and half a teaspoon pepper
-increase heat to high and bring to a boil
-reduce heat to a simmer and cook until potatoes are tender about 10 minutes
-stir in vinegar and swiss chard season with salt and pepper
-prepare the pasta to Al Dente by following the directions included with the pasta
-divide pasta evenly between bowls
-little soup over the pasta and garnish with cheese`
-  },
-
-  {
-    name: "Lentil Soup",
-    ingredients: [
-      { name: "olive oil", amount: 2, unit: "tbsp", category: "Pantry" },
-      { name: "onion", amount: 1, unit: "each", category: "Produce" },
-      { name: "carrots", amount: 1, unit: "each", category: "Produce" },
-      { name: "celery", amount: 1, unit: "stalk", category: "Produce" },
-      { name: "kosher salt", amount: 2, unit: "tsp", category: "Pantry" },
-      { name: "lentils", amount: 1, unit: "lb", category: "Pantry" },
-      { name: "peeled and chopped tomatoes", amount: 1, unit: "can", category: "Pantry" },
-      { name: "vegetable broth", amount: 2, unit: "quart", category: "Pantry" },
-      { name: "ground coriander", amount: 0.5, unit: "tsp", category: "Pantry" },
-      { name: "cumin", amount: 0.5, unit: "tsp", category: "Pantry" },
-      { name: "grains of paradise", amount: 0.5, unit: "tsp", category: "Pantry" }
-    ],
-    instructions: `PREP
-Get out a 6 quart dutch oven
-finely chop 1/2 a cup of onion
-finely chop 1/2 a cup of carrot
-finely chop 1/2 a cup of celery
-open the can of tomatoes
-
-place the olive oil into the dutch oven
-sit over medium heat
-once hot add the onion, carrot, and celery
-add salt
-
-sweat for 6 to 7 minutes 
-until the onions are translucent
-
-add
-lentils, tomatoes, broth, coriander, cumin, grains of paradise
-stir to combine
-
-increase the heat to high and bring just to a boil
-
-cover, reduce the heat to low, simmer for 35 to 40 minutes 
-until the lentils are tender
-serve immediately.`
-  },
-
-  {
-    name: "Left Overs",
-    ingredients: [
-      { name: "leftovers", amount: 0, unit: "each", category: "Pantry" }
-    ],
-    instructions: `PREP
-Get out of fridge
-microwave
-eat`
-  }
-];
-
-// -----------------------------
-// Standalone checkbox items
-// -----------------------------
-const standaloneItems = [
-  { name: "milk", amount: 1, unit: "cup", category: "Dairy" },
-  { name: "butter", amount: 1, unit: "lb", category: "Dairy" },
-  { name: "bread", amount: 1, unit: "loaf", category: "Bakery" },
-  { name: "eggs", amount: 12, unit: "each", category: "Dairy" },
-  { name: "bananas", amount: 6, unit: "each", category: "Produce" },
-  { name: "chicken breast", amount: 2, unit: "lb", category: "Meat" },
-  { name: "rice", amount: 2, unit: "lb", category: "Grains" },
-  { name: "olive oil", amount: 1, unit: "bottle", category: "Pantry" }
-];
-
-// -----------------------------
-// Unit conversion tables
-// -----------------------------
-const volumeToTsp = { tsp:1, tbsp:3, cup:48, pint:96, quart:192 };
-const weightToOz = { oz:1, lb:16 };
-
-// -----------------------------
-// Convert decimal to simplified fraction
-// -----------------------------
-function gcd(a,b){return b===0?a:gcd(b,a%b);}
-function toMixedFraction(value){
-  const whole=Math.floor(value),frac=value-whole;
-  if(frac===0) return `${whole}`;
-  const denominators=[2,3,4,6,8,12,16];
-  let bestNumerator=1,bestDenominator=2,minError=Infinity;
-  for(let d of denominators){
-    let n=Math.round(frac*d),error=Math.abs(frac-n/d);
-    if(error<minError && n>0){minError=n;bestDenominator=d;minError=error;}
-  }
-  const divisor=gcd(bestNumerator,bestDenominator);
-  const numerator=bestNumerator/divisor;
-  const denominator=bestDenominator/divisor;
-  if(whole===0) return `${numerator}/${denominator}`;
-  return `${whole} ${numerator}/${denominator}`;
-}
-
-// -----------------------------
-// Generate shopping list
-// -----------------------------
-function generateShoppingList(allIngredients){
-  const totals={};
-
-  allIngredients.forEach(ing=>{
-    let amount=ing.amount,unit=ing.unit;
-    if(volumeToTsp[unit]){amount*=volumeToTsp[unit];unit="tsp";}
-    else if(weightToOz[unit]){amount*=weightToOz[unit];unit="oz";}
-    if(!totals[ing.name]) totals[ing.name]={amount:0,unit,category:ing.category||"Other"};
-    totals[ing.name].amount+=amount;
-  });
-
-  const categories={};
-  for(let ing in totals){
-    const {amount,unit,category}=totals[ing];
-    if(!categories[category]) categories[category]=[];
-    categories[category].push({name:ing,amount,unit});
-  }
-
-  const shoppingList=[];
-  Object.keys(categories).sort().forEach(cat=>{
-    shoppingList.push(`<strong>${cat}</strong>`);
-    categories[cat].sort((a,b)=>a.name.localeCompare(b.name)).forEach(i=>{
-      if(i.unit==="tsp"){
-        let cups=Math.floor(i.amount/volumeToTsp.cup);i.amount-=cups*volumeToTsp.cup;
-        let tbsp=Math.floor(i.amount/volumeToTsp.tbsp);i.amount-=tbsp*volumeToTsp.tbsp;
-        let tsp=i.amount;let parts=[];
-        if(cups) parts.push(`${cups} cup`);
-        if(tbsp) parts.push(`${tbsp} tbsp`);
-        if(tsp) parts.push(`${toMixedFraction(tsp)} tsp`);
-        shoppingList.push(`${i.name}: ${parts.join(" + ")}`);
-      } else if(i.unit==="oz"){
-        let lbs=Math.floor(i.amount/weightToOz.lb);i.amount-=lbs*weightToOz.lb;
-        let oz=i.amount;let parts=[];
-        if(lbs) parts.push(`${lbs} lb`);
-        if(oz) parts.push(`${toMixedFraction(oz)} oz`);
-        shoppingList.push(`${i.name}: ${parts.join(" + ")}`);
-      } else {
-        shoppingList.push(`${i.name}: ${toMixedFraction(i.amount)} ${i.unit}`);
+  <script>
+    const recipes = [
+      {
+        name: "Spaghetti & Meatballs",
+        ingredients: [
+          { name: "Spaghetti", category: "Pantry" },
+          { name: "Ground beef", category: "Meat" },
+          { name: "Marinara sauce", category: "Pantry" },
+          { name: "Parmesan cheese", category: "Dairy" }
+        ],
+        steps: [
+          "Cook spaghetti according to package directions.",
+          "Brown ground beef in a skillet.",
+          "Add marinara sauce and simmer 10 minutes.",
+          "Serve sauce over pasta and top with cheese."
+        ]
+      },
+      {
+        name: "Chicken Stir Fry",
+        ingredients: [
+          { name: "Chicken breast", category: "Meat" },
+          { name: "Bell peppers", category: "Produce" },
+          { name: "Broccoli", category: "Produce" },
+          { name: "Soy sauce", category: "Pantry" },
+          { name: "Rice", category: "Pantry" }
+        ],
+        steps: [
+          "Cook rice.",
+          "Sauté chicken until cooked.",
+          "Add vegetables and cook until tender.",
+          "Stir in soy sauce and serve over rice."
+        ]
+      },
+      {
+        name: "Grilled Cheese & Tomato Soup",
+        ingredients: [
+          { name: "Bread", category: "Bakery" },
+          { name: "Cheddar cheese", category: "Dairy" },
+          { name: "Butter", category: "Dairy" },
+          { name: "Tomato soup", category: "Pantry" }
+        ],
+        steps: [
+          "Butter bread and assemble sandwiches with cheese.",
+          "Grill until golden and melted.",
+          "Heat soup and serve alongside."
+        ]
+      },
+      {
+        name: "Tacos",
+        ingredients: [
+          { name: "Ground beef", category: "Meat" },
+          { name: "Taco shells", category: "Pantry" },
+          { name: "Lettuce", category: "Produce" },
+          { name: "Tomatoes", category: "Produce" },
+          { name: "Cheddar cheese", category: "Dairy" }
+        ],
+        steps: [
+          "Brown beef and season.",
+          "Chop vegetables.",
+          "Assemble tacos and serve."
+        ]
+      },
+      {
+        name: "Pancakes & Eggs",
+        ingredients: [
+          { name: "Pancake mix", category: "Pantry" },
+          { name: "Eggs", category: "Dairy" },
+          { name: "Milk", category: "Dairy" },
+          { name: "Butter", category: "Dairy" },
+          { name: "Syrup", category: "Pantry" }
+        ],
+        steps: [
+          "Mix pancake batter and cook.",
+          "Scramble or fry eggs.",
+          "Serve with butter and syrup."
+        ]
       }
-    });
-  });
+    ];
 
-  return shoppingList;
-}
+    const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
-// -----------------------------
-// UI Logic
-// -----------------------------
-document.addEventListener("DOMContentLoaded",()=>{
-  const days=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+    const categoryOrder = ["Produce", "Meat", "Dairy", "Bakery", "Pantry", "Frozen", "Other"];
 
-  // Populate recipe dropdowns
-  days.forEach(day=>{
-    const select=document.getElementById(day);
-    recipes.forEach((r,i)=>{
-      const option=document.createElement("option");
-      option.value=r.name;
-      option.textContent=r.name;
-      if(i===0) option.selected=true;
-      select.appendChild(option);
-    });
-  });
-
-  // Build standalone checkboxes
-  const checkboxDiv=document.getElementById("checkboxes");
-  standaloneItems.forEach((item,i)=>{
-    const id=`standalone-${i}`;
-    const label=document.createElement("label");
-    label.innerHTML=`<input type="checkbox" id="${id}" value="${item.name}"> ${item.name} (${item.unit})`;
-    checkboxDiv.appendChild(label);
-  });
-
-  // Generate button
-  document.getElementById("generate-btn").addEventListener("click",()=>{
-    const selectedRecipes=[];
-    days.forEach(day=>{
-      const select=document.getElementById(day);
-      const recipe=recipes.find(r=>r.name===select.value);
-      if(recipe) selectedRecipes.push(recipe);
-    });
-
-    // Checked standalone items
-    const selectedStandalone=[];
-    standaloneItems.forEach((item,i)=>{
-      const checkbox=document.getElementById(`standalone-${i}`);
-      if(checkbox.checked) selectedStandalone.push(item);
-    });
-
-    const allIngredients=[...selectedRecipes.flatMap(r=>r.ingredients),...selectedStandalone];
-
-    // Shopping list
-    const shopping=generateShoppingList(allIngredients);
-    document.getElementById("shopping-list").innerHTML =
-      "<h2>Shopping List</h2><ul>"+shopping.map(i=>`<li>${i}</li>`).join("")+"</ul>";
-
-    // Recipes
-    const recipesDiv=document.getElementById("recipes");
-    recipesDiv.innerHTML="<h2>Recipes</h2>";
-    selectedRecipes.forEach(r=>{
-      const div=document.createElement("div");
-      div.className="recipe";
-      let html=`<h3>${r.name}</h3><h4>Ingredients</h4><ul>`;
-      r.ingredients.forEach(ing=>{
-        html+=`<li>${toMixedFraction(ing.amount)} ${ing.unit} ${ing.name}</li>`;
+    // ---------- Populate dropdowns ----------
+    days.forEach(day => {
+      const select = document.getElementById(day);
+      recipes.forEach((r, i) => {
+        const option = document.createElement("option");
+        option.value = r.name;
+        option.textContent = r.name;
+        if (i === 0) option.selected = true;
+        select.appendChild(option);
       });
-      html+="</ul><h4>Instructions</h4>";
-      r.instructions.split("\n").forEach(step=>{
-        if(step.trim()==="") html+="<br>";
-        else html+=`<p>${step.trim()}</p>`;
-      });
-      div.innerHTML=html;
-      recipesDiv.appendChild(div);
     });
-  });
 
-  // Print button
-  document.getElementById("print-btn").addEventListener("click",()=>{
-    window.print();
-  });
-});
-</script>
+    document.getElementById("generateBtn").addEventListener("click", generatePlan);
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+    function generatePlan() {
+      const selectedRecipes = days.map(day => {
+        const name = document.getElementById(day).value;
+        return recipes.find(r => r.name === name);
+      });
+
+      buildShoppingList(selectedRecipes);
+      buildRecipePages(selectedRecipes);
+
+      document.getElementById("shoppingPage").classList.remove("hidden");
+    }
+
+    // ---------- Shopping List ----------
+    function buildShoppingList(selectedRecipes) {
+      const shoppingDiv = document.getElementById("shoppingList");
+      shoppingDiv.innerHTML = "";
+
+      const categories = {};
+
+      selectedRecipes.forEach(recipe => {
+        recipe.ingredients.forEach(item => {
+          if (!categories[item.category]) {
+            categories[item.category] = new Set();
+          }
+          categories[item.category].add(item.name);
+        });
+      });
+
+      categoryOrder.forEach(category => {
+        if (!categories[category]) return;
+
+        const div = document.createElement("div");
+        div.className = "category";
+
+        const h3 = document.createElement("h3");
+        h3.textContent = category;
+        div.appendChild(h3);
+
+        const ul = document.createElement("ul");
+        categories[category].forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          ul.appendChild(li);
+        });
+
+        div.appendChild(ul);
+        shoppingDiv.appendChild(div);
+      });
+    }
+
+    // ---------- Recipe Pages ----------
+    function buildRecipePages(selectedRecipes) {
+      const recipesDiv = document.getElementById("recipesPages");
+      recipesDiv.innerHTML = "";
+
+      selectedRecipes.forEach(recipe => {
+        const page = document.createElement("div");
+        page.className = "print-page recipe-card";
+
+        const h2 = document.createElement("h2");
+        h2.textContent = recipe.name;
+        page.appendChild(h2);
+
+        const ingHeader = document.createElement("h3");
+        ingHeader.textContent = "Ingredients";
+        page.appendChild(ingHeader);
+
+        const ul = document.createElement("ul");
+        recipe.ingredients.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `${item.name} (${item.category})`;
+          ul.appendChild(li);
+        });
+        page.appendChild(ul);
+
+        const stepsHeader = document.createElement("h3");
+        stepsHeader.textContent = "Instructions";
+        page.appendChild(stepsHeader);
+
+        const ol = document.createElement("ol");
+        recipe.steps.forEach(step => {
+          const li = document.createElement("li");
+          li.textContent = step;
+          ol.appendChild(li);
+        });
+        page.appendChild(ol);
+
+        recipesDiv.appendChild(page);
+      });
+    }
+  </script>
 </body>
 </html>
