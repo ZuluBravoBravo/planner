@@ -71,21 +71,21 @@ const recipes = [
   {
     name: "Winter Minestrone Soup",
     ingredients: [
-      { name: "onion", amount: 1, unit: "each", category: "vegetable" },
-      { name: "celery", amount: 1, unit: "stalk", category: "vegetable" },
-      { name: "fennel", amount: 1, unit: "bulb", category: "vegetable" },
-      { name: "yukon gold potatoes", amount: 2, unit: "each", category: "vegetable" },
-      { name: "garlic", amount: 2, unit: "cloves", category: "vegetable" },
-      { name: "olive oil", amount: 1, unit: "tbsp", category: "pantry" },
-      { name: "crushed whole tomatoes", amount: 1, unit: "can", category: "pantry" },
-      { name: "vegetable broth", amount: 8, unit: "cups", category: "pantry" },
-      { name: "cannellini beans", amount: 1, unit: "can", category: "pantry" },
-      { name: "red wine vinegar", amount: 2, unit: "tsp", category: "pantry" },
-      { name: "swiss chard", amount: 1.5 , unit: "bunch", category: "vegetable" },
-      { name: "short pasta", amount: 2, unit: "cups", category: "pantry" },
-      { name: "grated parmesan cheese", amount: 1, unit: "cup", category: "dairy" },
-      { name: "salt", amount: 1, unit: "pinch", category: "pantry" },
-      { name: "pepper", amount: 1, unit: "pinch", category: "pantry" }
+      { name: "onion", amount: 1, unit: "each", category: "Produce" },
+      { name: "celery", amount: 1, unit: "stalk", category: "Produce" },
+      { name: "fennel", amount: 1, unit: "bulb", category: "Produce" },
+      { name: "yukon gold potatoes", amount: 2, unit: "each", category: "Produce" },
+      { name: "garlic", amount: 2, unit: "cloves", category: "Produce" },
+      { name: "olive oil", amount: 1, unit: "tbsp", category: "Pantry" },
+      { name: "crushed whole tomatoes", amount: 1, unit: "can", category: "Pantry" },
+      { name: "vegetable broth", amount: 8, unit: "cups", category: "Pantry" },
+      { name: "cannellini beans", amount: 1, unit: "can", category: "Pantry" },
+      { name: "red wine vinegar", amount: 2, unit: "tsp", category: "Pantry" },
+      { name: "swiss chard", amount: 1.5 , unit: "bunch", category: "Produce" },
+      { name: "short pasta", amount: 2, unit: "cups", category: "Grains" },
+      { name: "grated parmesan cheese", amount: 1, unit: "cup", category: "Dairy" },
+      { name: "salt", amount: 1, unit: "pinch", category: "Pantry" },
+      { name: "pepper", amount: 1, unit: "pinch", category: "Pantry" }
     ],
     instructions: `PREP
 get out a large stock pot
@@ -109,15 +109,58 @@ prepare the pasta to Al Dente by following the directions included with the past
 divide pasta evenly between bowls
 little soup over the pasta and garnish with cheese`
   },
+
   {
-    name: "Omelette",
+    name: "Lentil Soup",
     ingredients: [
-      { name: "egg", amount: 3, unit: "each", category: "dairy" },
-      { name: "milk", amount: 0.25, unit: "cup", category: "dairy" },
-      { name: "cheddar cheese", amount: 2, unit: "oz", category: "dairy" },
-      { name: "salt", amount: 1, unit: "tsp", category: "pantry" }
+      { name: "olive oil", amount: 2, unit: "tbsp", category: "Pantry" },
+      { name: "onion", amount: 1, unit: "each", category: "Produce" },
+      { name: "carrots", amount: 1, unit: "each", category: "Produce" },
+      { name: "celery", amount: 1, unit: "stalk", category: "Produce" },
+      { name: "kosher salt", amount: 2, unit: "tsp", category: "Pantry" },
+      { name: "lentils", amount: 1, unit: "lb", category: "Pantry" },
+      { name: "peeled and chopped tomatoes", amount: 1, unit: "can", category: "Pantry" },
+      { name: "vegetable broth", amount: 2, unit: "quart", category: "Pantry" },
+      { name: "ground coriander", amount: 0.5, unit: "tsp", category: "Pantry" },
+      { name: "cumin", amount: 0.5, unit: "tsp", category: "Pantry" },
+      { name: "grains of paradise", amount: 0.5, unit: "tsp", category: "Pantry" }
     ],
-    instructions: "Beat eggs and milk, heat pan, pour eggs, add cheese, fold and serve."
+    instructions: `PREP
+Get out a 6 quart dutch oven
+finely chop 1/2 a cup of onion
+finely chop 1/2 a cup of carrot
+finely chop 1/2 a cup of celery
+open the can of tomatoes
+
+place the olive oil into the dutch oven
+sit over medium heat
+once hot add the onion, carrot, and celery
+add salt
+
+sweat for 6 to 7 minutes 
+until the onions are translucent
+
+add
+lentils, tomatoes, broth, coriander, cumin, grains of paradise
+stir to combine
+
+increase the heat to high and bring just to a boil
+
+cover, reduce the heat to low, simmer for 35 to 40 minutes 
+until the lentils are tender
+serve immediately.`
+  },
+
+  {
+    name: "Left Overs",
+    ingredients: [
+      { name: "leftovers", amount: 0, unit: "each", category: "pantry" },
+
+    ],
+    instructions: `PREP
+    Get out of fridge
+    microwave
+    eat`
   }
 ];
 
