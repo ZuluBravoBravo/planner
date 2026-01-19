@@ -42,7 +42,7 @@
     margin-top: 30px;
   }
 
-  .shopping-list, .recipe {
+  .recipe {
     margin-bottom: 30px;
   }
 
@@ -53,23 +53,29 @@
   ul {
     list-style-type: disc;
     margin-left: 20px;
+    margin-top: 4px;
+    margin-bottom: 10px;
   }
 
-  /* ---------- SHOPPING LIST COLUMNS ---------- */
-  .shopping-columns {
-    column-count: 2;
+  /* ---------- SHOPPING LIST ---------- */
+  #shopping-page h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .shopping-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     column-gap: 40px;
   }
 
-  .shopping-columns h3 {
-    break-inside: avoid;
-    margin-top: 10px;
+  .shopping-col h3 {
+    margin-top: 8px;
+    margin-bottom: 4px;
   }
 
-  .shopping-columns ul {
-    break-inside: avoid;
-    margin-top: 4px;
-    margin-bottom: 10px;
+  .shopping-col ul {
+    margin-top: 0;
   }
 
   /* ---------- RECIPE SPACING ---------- */
@@ -126,7 +132,7 @@
 <button id="print-btn" onclick="window.print()">Print / Save PDF</button>
 
 <div id="output">
-  <div id="shopping-list" class="shopping-list"></div>
+  <div id="shopping-list"></div>
   <div id="recipes"></div>
 </div>
 
@@ -269,7 +275,7 @@ function toMixedFraction(value){
 // -----------------------------
 // Shopping list builder
 // -----------------------------
-function generateShoppingList(allIngredients){
+function generateShoppingColumns(allIngredients){
   const totals={};
 
   allIngredients.forEach(ing=>{
@@ -287,12 +293,53 @@ function generateShoppingList(allIngredients){
     categories[category].push({name,amount,unit});
   }
 
-  const html=[];
-  Object.keys(categories).sort().forEach(cat=>{
-    html.push(`<h3>${cat}</h3><ul>`);
-    categories[cat]
-      .sort((a,b)=>a.name.localeCompare(b.name))
-      .forEach(i=>{
+  // Sort categories + items
+  const orderedCats=Object.keys(categories).sort();
+  orderedCats.forEach(cat=>{
+    categories[cat].sort((a,b)=>a.name.localeCompare(b.name));
+  });
+
+  // Flatten into printable rows
+  const rows=[];
+  orderedCats.forEach(cat=>{
+    rows.push({type:"header", text:cat});
+    categories[cat].forEach(item=>{
+      rows.push({type:"item", item});
+    });
+  });
+
+  // Measure approx rows per column (fits letter portrait nicely)
+  const ROWS_PER_COLUMN=42;
+
+  const col1=[];
+  const col2=[];
+  let currentCol=col1;
+  let rowCount=0;
+  let currentCategory=null;
+
+  rows.forEach(row=>{
+    if(rowCount>=ROWS_PER_COLUMN){
+      currentCol=col2;
+      rowCount=0;
+      if(currentCategory){
+        currentCol.push({type:"header", text:currentCategory});
+        rowCount++;
+      }
+    }
+
+    currentCol.push(row);
+    rowCount++;
+
+    if(row.type==="header") currentCategory=row.text;
+  });
+
+  function renderColumn(col){
+    let html="";
+    col.forEach(row=>{
+      if(row.type==="header"){
+        html+=`<h3>${row.text}</h3><ul>`;
+      } else {
+        const i=row.item;
         if(i.unit==="tsp"){
           let cups=Math.floor(i.amount/volumeToTsp.cup);i.amount-=cups*volumeToTsp.cup;
           let tbsp=Math.floor(i.amount/volumeToTsp.tbsp);i.amount-=tbsp*volumeToTsp.tbsp;
@@ -301,22 +348,32 @@ function generateShoppingList(allIngredients){
           if(cups) parts.push(`${cups} cup`);
           if(tbsp) parts.push(`${tbsp} tbsp`);
           if(tsp) parts.push(`${toMixedFraction(tsp)} tsp`);
-          html.push(`<li>${i.name}: ${parts.join(" + ")}</li>`);
+          html+=`<li>${i.name}: ${parts.join(" + ")}</li>`;
         } else if(i.unit==="oz"){
           let lbs=Math.floor(i.amount/weightToOz.lb);i.amount-=lbs*weightToOz.lb;
           let oz=i.amount;
           let parts=[];
           if(lbs) parts.push(`${lbs} lb`);
           if(oz) parts.push(`${toMixedFraction(oz)} oz`);
-          html.push(`<li>${i.name}: ${parts.join(" + ")}</li>`);
+          html+=`<li>${i.name}: ${parts.join(" + ")}</li>`;
         } else {
-          html.push(`<li>${i.name}: ${toMixedFraction(i.amount)} ${i.unit}</li>`);
+          html+=`<li>${i.name}: ${toMixedFraction(i.amount)} ${i.unit}</li>`;
         }
-      });
-    html.push(`</ul>`);
-  });
+      }
+    });
+    html+=`</ul>`;
+    return html;
+  }
 
-  return html.join("");
+  return `
+    <div id="shopping-page" class="print-page">
+      <h2>Shopping List</h2>
+      <div class="shopping-grid">
+        <div class="shopping-col">${renderColumn(col1)}</div>
+        <div class="shopping-col">${renderColumn(col2)}</div>
+      </div>
+    </div>
+  `;
 }
 
 // -----------------------------
@@ -368,7 +425,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     // Shopping list
     document.getElementById("shopping-list").innerHTML=
-      `<div class="print-page shopping-columns"><h2>Shopping List</h2>${generateShoppingList(allIngredients)}</div>`;
+      generateShoppingColumns(allIngredients);
 
     // Recipes
     const recipesDiv=document.getElementById("recipes");
