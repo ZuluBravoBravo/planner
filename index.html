@@ -52,9 +52,8 @@
 
   ul {
     list-style-type: disc;
-    margin-left: 20px;
-    margin-top: 4px;
-    margin-bottom: 10px;
+    margin: 0;
+    padding-left: 20px;
   }
 
   /* ---------- SHOPPING LIST ---------- */
@@ -70,12 +69,12 @@
   }
 
   .shopping-col h3 {
-    margin-top: 8px;
-    margin-bottom: 4px;
+    margin: 8px 0 4px 0;
   }
 
   .shopping-col ul {
-    margin-top: 0;
+    margin: 0 0 10px 0;
+    padding-left: 20px;
   }
 
   /* ---------- RECIPE SPACING ---------- */
@@ -293,13 +292,11 @@ function generateShoppingColumns(allIngredients){
     categories[category].push({name,amount,unit});
   }
 
-  // Sort categories + items
   const orderedCats=Object.keys(categories).sort();
   orderedCats.forEach(cat=>{
     categories[cat].sort((a,b)=>a.name.localeCompare(b.name));
   });
 
-  // Flatten into printable rows
   const rows=[];
   orderedCats.forEach(cat=>{
     rows.push({type:"header", text:cat});
@@ -308,7 +305,6 @@ function generateShoppingColumns(allIngredients){
     });
   });
 
-  // Measure approx rows per column (fits letter portrait nicely)
   const ROWS_PER_COLUMN=42;
 
   const col1=[];
@@ -335,9 +331,12 @@ function generateShoppingColumns(allIngredients){
 
   function renderColumn(col){
     let html="";
+    let open=false;
     col.forEach(row=>{
       if(row.type==="header"){
+        if(open) html+="</ul>";
         html+=`<h3>${row.text}</h3><ul>`;
+        open=true;
       } else {
         const i=row.item;
         if(i.unit==="tsp"){
@@ -361,7 +360,7 @@ function generateShoppingColumns(allIngredients){
         }
       }
     });
-    html+=`</ul>`;
+    if(open) html+="</ul>";
     return html;
   }
 
@@ -382,7 +381,6 @@ function generateShoppingColumns(allIngredients){
 document.addEventListener("DOMContentLoaded",()=>{
   const days=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
 
-  // Populate recipe dropdowns
   days.forEach(day=>{
     const select=document.getElementById(day);
     recipes.forEach(r=>{
@@ -393,7 +391,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     });
   });
 
-  // Populate standalone checkboxes
   const boxContainer=document.getElementById("standalone-checkboxes");
   standaloneItems.forEach((item,i)=>{
     const label=document.createElement("label");
@@ -406,7 +403,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     boxContainer.appendChild(label);
   });
 
-  // Generate button
   document.getElementById("generate-btn").addEventListener("click",()=>{
     const selectedRecipes=[];
     days.forEach(day=>{
@@ -423,11 +419,9 @@ document.addEventListener("DOMContentLoaded",()=>{
       ...checkedStandalone
     ];
 
-    // Shopping list
     document.getElementById("shopping-list").innerHTML=
       generateShoppingColumns(allIngredients);
 
-    // Recipes
     const recipesDiv=document.getElementById("recipes");
     recipesDiv.innerHTML="";
     selectedRecipes.forEach(r=>{
