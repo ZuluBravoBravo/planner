@@ -10,7 +10,13 @@
   .day-selector, #standalone-section { margin-bottom: 15px; }
   label { font-weight: bold; margin-right: 10px; }
   select { padding: 5px; }
-  #generate-btn { display: block; margin: 20px auto; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  #generate-btn, #print-btn {
+    display: block;
+    margin: 15px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
   #output { margin-top: 40px; }
   .shopping-list, .recipe { margin-bottom: 40px; }
   .recipe { page-break-before: always; }
@@ -58,6 +64,7 @@
 </div>
 
 <button id="generate-btn">Generate Recipes & Shopping List</button>
+<button id="print-btn">Print / Save as PDF</button>
 
 <div id="output">
   <div class="shopping-list" id="shopping-list"></div>
@@ -165,13 +172,17 @@ eat`
 ];
 
 // -----------------------------
-// Standalone items (checkboxes)
+// Standalone checkbox items
 // -----------------------------
 const standaloneItems = [
-  { name: "milk", amount: 1, unit: "cup", category: "Staples" },
-  { name: "cereal", amount: 1, unit: "box", category: "Staples" },
-  { name: "bread", amount: 1, unit: "loaf", category: "Staples" },
-  { name: "butter", amount: 1, unit: "lb", category: "Dairy" }
+  { name: "milk", amount: 1, unit: "cup", category: "Dairy" },
+  { name: "butter", amount: 1, unit: "lb", category: "Dairy" },
+  { name: "bread", amount: 1, unit: "loaf", category: "Bakery" },
+  { name: "eggs", amount: 12, unit: "each", category: "Dairy" },
+  { name: "bananas", amount: 6, unit: "each", category: "Produce" },
+  { name: "chicken breast", amount: 2, unit: "lb", category: "Meat" },
+  { name: "rice", amount: 2, unit: "lb", category: "Grains" },
+  { name: "olive oil", amount: 1, unit: "bottle", category: "Pantry" }
 ];
 
 // -----------------------------
@@ -266,7 +277,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     });
   });
 
-  // Build checkboxes for standalone items
+  // Build standalone checkboxes
   const checkboxDiv=document.getElementById("checkboxes");
   standaloneItems.forEach((item,i)=>{
     const id=`standalone-${i}`;
@@ -316,6 +327,11 @@ document.addEventListener("DOMContentLoaded",()=>{
       div.innerHTML=html;
       recipesDiv.appendChild(div);
     });
+  });
+
+  // Print button
+  document.getElementById("print-btn").addEventListener("click",()=>{
+    window.print();
   });
 });
 </script>
