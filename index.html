@@ -6,36 +6,77 @@
 <title>Planner</title>
 
 <style>
-  body { font-family: Arial, sans-serif; margin: 20px; }
-  h1, h2, h3 { text-align: center; }
-
-  .day-selector, #standalone-section, #generate-btn, #print-btn {
-    margin-bottom: 15px;
-    text-align: center;
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    text-align: left;
   }
 
-  label { font-weight: bold; margin-right: 10px; }
-  select { padding: 5px; }
+  h1, h2, h3 {
+    text-align: left;
+    margin-bottom: 6px;
+  }
+
+  .day-selector, #standalone-section {
+    margin-bottom: 10px;
+  }
+
+  label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  select {
+    padding: 5px;
+  }
 
   #generate-btn, #print-btn {
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 8px 16px;
+    font-size: 15px;
     cursor: pointer;
-    margin: 10px auto;
-    display: block;
+    margin: 10px 0;
+    display: inline-block;
   }
 
-  #output { margin-top: 40px; }
+  #output {
+    margin-top: 30px;
+  }
 
   .shopping-list, .recipe {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
   }
 
   .print-page {
     page-break-before: always;
   }
 
-  ul { list-style-type: disc; margin-left: 20px; }
+  ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+
+  /* ---------- SHOPPING LIST COLUMNS ---------- */
+  .shopping-columns {
+    column-count: 2;
+    column-gap: 40px;
+  }
+
+  .shopping-columns h3 {
+    break-inside: avoid;
+    margin-top: 10px;
+  }
+
+  .shopping-columns ul {
+    break-inside: avoid;
+    margin-top: 4px;
+    margin-bottom: 10px;
+  }
+
+  /* ---------- RECIPE SPACING ---------- */
+  .recipe p {
+    margin: 2px 0;
+    line-height: 1.2;
+  }
 
   /* ---------- PRINT RULES ---------- */
   @media print {
@@ -54,7 +95,7 @@
       width: 100%;
     }
 
-    #print-btn {
+    #generate-btn, #print-btn {
       display: none;
     }
   }
@@ -316,7 +357,6 @@ document.addEventListener("DOMContentLoaded",()=>{
       if(recipe) selectedRecipes.push(recipe);
     });
 
-    // Checked standalone items
     const checkedStandalone=Array.from(
       document.querySelectorAll("#standalone-checkboxes input:checked")
     ).map(cb=>standaloneItems[cb.value]);
@@ -328,7 +368,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     // Shopping list
     document.getElementById("shopping-list").innerHTML=
-      `<div class="print-page"><h2>Shopping List</h2>${generateShoppingList(allIngredients)}</div>`;
+      `<div class="print-page shopping-columns"><h2>Shopping List</h2>${generateShoppingList(allIngredients)}</div>`;
 
     // Recipes
     const recipesDiv=document.getElementById("recipes");
@@ -342,7 +382,7 @@ document.addEventListener("DOMContentLoaded",()=>{
       });
       html+="</ul><h3>Instructions</h3>";
       r.instructions.split("\n").forEach(line=>{
-        if(line.trim()==="") html+="<br>";
+        if(line.trim()==="") html+="<p>&nbsp;</p>";
         else html+=`<p>${line}</p>`;
       });
       div.innerHTML=html;
