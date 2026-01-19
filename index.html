@@ -15,6 +15,7 @@
   .shopping-list, .recipe { margin-bottom: 40px; }
   .recipe { page-break-before: always; }
   ul { list-style-type: disc; margin-left: 20px; }
+  .checkbox-group label { font-weight: normal; display: block; }
 </style>
 </head>
 <body>
@@ -52,8 +53,8 @@
 </div>
 
 <div id="standalone-section">
-  <label for="standalone-select">Add individual items:</label>
-  <select id="standalone-select" multiple></select>
+  <h3>Add individual items:</h3>
+  <div id="checkboxes" class="checkbox-group"></div>
 </div>
 
 <button id="generate-btn">Generate Recipes & Shopping List</button>
@@ -154,24 +155,23 @@ serve immediately.`
   {
     name: "Left Overs",
     ingredients: [
-      { name: "leftovers", amount: 0, unit: "each", category: "pantry" },
-
+      { name: "leftovers", amount: 0, unit: "each", category: "Pantry" }
     ],
     instructions: `PREP
-    Get out of fridge
-    microwave
-    eat`
+Get out of fridge
+microwave
+eat`
   }
 ];
 
 // -----------------------------
-// Standalone items (not part of a recipe)
+// Standalone items (checkboxes)
 // -----------------------------
 const standaloneItems = [
-  { name: "milk", amount: 1, unit: "cup", category: "staples" },
-  { name: "cereal", amount: 1, unit: "box", category: "staples" },
-  { name: "bread", amount: 1, unit: "loaf", category: "staples" },
-  { name: "butter", amount: 1, unit: "lb", category: "dairy" }
+  { name: "milk", amount: 1, unit: "cup", category: "Staples" },
+  { name: "cereal", amount: 1, unit: "box", category: "Staples" },
+  { name: "bread", amount: 1, unit: "loaf", category: "Staples" },
+  { name: "butter", amount: 1, unit: "lb", category: "Dairy" }
 ];
 
 // -----------------------------
@@ -210,11 +210,10 @@ function generateShoppingList(allIngredients){
     let amount=ing.amount,unit=ing.unit;
     if(volumeToTsp[unit]){amount*=volumeToTsp[unit];unit="tsp";}
     else if(weightToOz[unit]){amount*=weightToOz[unit];unit="oz";}
-    if(!totals[ing.name]) totals[ing.name]={amount:0,unit,category:ing.category||"other"};
+    if(!totals[ing.name]) totals[ing.name]={amount:0,unit,category:ing.category||"Other"};
     totals[ing.name].amount+=amount;
   });
 
-  // Group by category, then sort alphabetically
   const categories={};
   for(let ing in totals){
     const {amount,unit,category}=totals[ing];
@@ -240,7 +239,9 @@ function generateShoppingList(allIngredients){
         if(lbs) parts.push(`${lbs} lb`);
         if(oz) parts.push(`${toMixedFraction(oz)} oz`);
         shoppingList.push(`${i.name}: ${parts.join(" + ")}`);
-      } else shoppingList.push(`${i.name}: ${toMixedFraction(i.amount)} ${i.unit}`);
+      } else {
+        shoppingList.push(`${i.name}: ${toMixedFraction(i.amount)} ${i.unit}`);
+      }
     });
   });
 
@@ -256,21 +257,22 @@ document.addEventListener("DOMContentLoaded",()=>{
   // Populate recipe dropdowns
   days.forEach(day=>{
     const select=document.getElementById(day);
-    recipes.forEach(r=>{
+    recipes.forEach((r,i)=>{
       const option=document.createElement("option");
       option.value=r.name;
       option.textContent=r.name;
+      if(i===0) option.selected=true;
       select.appendChild(option);
     });
   });
 
-  // Populate standalone items
-  const standaloneSelect=document.getElementById("standalone-select");
-  standaloneItems.forEach(item=>{
-    const option=document.createElement("option");
-    option.value=item.name;
-    option.textContent=`${item.name} (${item.unit})`;
-    standaloneSelect.appendChild(option);
+  // Build checkboxes for standalone items
+  const checkboxDiv=document.getElementById("checkboxes");
+  standaloneItems.forEach((item,i)=>{
+    const id=`standalone-${i}`;
+    const label=document.createElement("label");
+    label.innerHTML=`<input type="checkbox" id="${id}" value="${item.name}"> ${item.name} (${item.unit})`;
+    checkboxDiv.appendChild(label);
   });
 
   // Generate button
@@ -282,15 +284,19 @@ document.addEventListener("DOMContentLoaded",()=>{
       if(recipe) selectedRecipes.push(recipe);
     });
 
-    // Selected standalone items
-    const selectedStandalone=Array.from(standaloneSelect.selectedOptions)
-      .map(opt=>standaloneItems.find(item=>item.name===opt.value));
+    // Checked standalone items
+    const selectedStandalone=[];
+    standaloneItems.forEach((item,i)=>{
+      const checkbox=document.getElementById(`standalone-${i}`);
+      if(checkbox.checked) selectedStandalone.push(item);
+    });
 
     const allIngredients=[...selectedRecipes.flatMap(r=>r.ingredients),...selectedStandalone];
 
     // Shopping list
     const shopping=generateShoppingList(allIngredients);
-    document.getElementById("shopping-list").innerHTML="<h2>Shopping List</h2><ul>"+shopping.map(i=>`<li>${i}</li>`).join("")+"</ul>";
+    document.getElementById("shopping-list").innerHTML =
+      "<h2>Shopping List</h2><ul>"+shopping.map(i=>`<li>${i}</li>`).join("")+"</ul>";
 
     // Recipes
     const recipesDiv=document.getElementById("recipes");
@@ -304,7 +310,8 @@ document.addEventListener("DOMContentLoaded",()=>{
       });
       html+="</ul><h4>Instructions</h4>";
       r.instructions.split("\n").forEach(step=>{
-        if(step.trim()==="") html+="<br>"; else html+=`<p>${step.trim()}</p>`;
+        if(step.trim()==="") html+="<br>";
+        else html+=`<p>${step.trim()}</p>`;
       });
       div.innerHTML=html;
       recipesDiv.appendChild(div);
