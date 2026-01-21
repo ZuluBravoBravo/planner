@@ -509,29 +509,23 @@ function generateShoppingColumns(allIngredients){
     });
   });
 
-  const ROWS_PER_COLUMN = 42;
+const midpoint = Math.ceil(rows.length / 2);
+const col1 = [];
+const col2 = [];
 
-  const col1 = [];
-  const col2 = [];
-  let currentCol = col1;
-  let rowCount = 0;
-  let currentCategory = null;
+let i = 0;
+while (i < rows.length) {
+  // Try not to split right before a header
+  if (i >= midpoint && rows[i].type === "header") break;
+  col1.push(rows[i]);
+  i++;
+}
 
-  rows.forEach(row => {
-    if (rowCount >= ROWS_PER_COLUMN) {
-      currentCol = col2;
-      rowCount = 0;
-      if (currentCategory) {
-        currentCol.push({ type: "header", text: currentCategory });
-        rowCount++;
-      }
-    }
+while (i < rows.length) {
+  col2.push(rows[i]);
+  i++;
+}
 
-    currentCol.push(row);
-    rowCount++;
-
-    if (row.type === "header") currentCategory = row.text;
-  });
 
   function renderColumn(col){
     let html = "";
