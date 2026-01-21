@@ -466,55 +466,64 @@ function toMixedFraction(value){
   if(whole===0) return `${numerator}/${denominator}`;
   return `${whole} ${numerator}/${denominator}`;
 }
-
 // -----------------------------
 // Shopping list builder
 // -----------------------------
 function generateShoppingColumns(allIngredients){
-  const totals={};
+  const totals = {};
 
-  allIngredients.forEach(ing=>{
-    let amount=ing.amount,unit=ing.unit;
-    if(volumeToTsp[unit]){amount*=volumeToTsp[unit];unit="tsp";}
-    else if(weightToOz[unit]){amount*=weightToOz[unit];unit="oz";}
-    if(!totals[ing.name]) totals[ing.name]={amount:0,unit,category:ing.category||"Other"};
-    totals[ing.name].amount+=amount;
+  allIngredients.forEach(ing => {
+    let amount = ing.amount;
+    let unit = ing.unit.toLowerCase();
+
+    if (volumeToTsp[unit]) {
+      amount *= volumeToTsp[unit];
+      unit = "tsp";
+    } else if (weightToOz[unit]) {
+      amount *= weightToOz[unit];
+      unit = "oz";
+    }
+
+    if (!totals[ing.name]) {
+      totals[ing.name] = { amount: 0, unit, category: ing.category || "Other" };
+    }
+    totals[ing.name].amount += amount;
   });
 
-  const categories={};
-  for(let name in totals){
-    const {amount,unit,category}=totals[name];
-    if(!categories[category]) categories[category]=[];
-    categories[category].push({name,amount,unit});
+  const categories = {};
+  for (let name in totals) {
+    const { amount, unit, category } = totals[name];
+    if (!categories[category]) categories[category] = [];
+    categories[category].push({ name, amount, unit });
   }
 
-  const orderedCats=Object.keys(categories).sort();
-  orderedCats.forEach(cat=>{
-    categories[cat].sort((a,b)=>a.name.localeCompare(b.name));
+  const orderedCats = Object.keys(categories).sort();
+  orderedCats.forEach(cat => {
+    categories[cat].sort((a, b) => a.name.localeCompare(b.name));
   });
 
-  const rows=[];
-  orderedCats.forEach(cat=>{
-    rows.push({type:"header", text:cat});
-    categories[cat].forEach(item=>{
-      rows.push({type:"item", item});
+  const rows = [];
+  orderedCats.forEach(cat => {
+    rows.push({ type: "header", text: cat });
+    categories[cat].forEach(item => {
+      rows.push({ type: "item", item });
     });
   });
 
-  const ROWS_PER_COLUMN=42;
+  const ROWS_PER_COLUMN = 42;
 
-  const col1=[];
-  const col2=[];
-  let currentCol=col1;
-  let rowCount=0;
-  let currentCategory=null;
+  const col1 = [];
+  const col2 = [];
+  let currentCol = col1;
+  let rowCount = 0;
+  let currentCategory = null;
 
-  rows.forEach(row=>{
-    if(rowCount>=ROWS_PER_COLUMN){
-      currentCol=col2;
-      rowCount=0;
-      if(currentCategory){
-        currentCol.push({type:"header", text:currentCategory});
+  rows.forEach(row => {
+    if (rowCount >= ROWS_PER_COLUMN) {
+      currentCol = col2;
+      rowCount = 0;
+      if (currentCategory) {
+        currentCol.push({ type: "header", text: currentCategory });
         rowCount++;
       }
     }
@@ -522,53 +531,73 @@ function generateShoppingColumns(allIngredients){
     currentCol.push(row);
     rowCount++;
 
-    if(row.type==="header") currentCategory=row.text;
+    if (row.type === "header") currentCategory = row.text;
   });
 
   function renderColumn(col){
-    let html="";
-    let open=false;
-    col.forEach(row=>{
-      if(row.type==="header"){
-        if(open) html+="</ul>";
-        html+=`<h3>${row.text}</h3><ul>`;
-        open=true;
+    let html = "";
+    let open = false;
+
+    col.forEach(row => {
+      if (row.type === "header") {
+        if (open) html += "</ul>";
+        html += `<h3>${row.text}</h3><ul>`;
+        open = true;
       } else {
-        const i=row.item;
-if(i.unit==="tsp"){
-  let amt = i.amount;
+        const i = row.item;
 
-  let gallons = Math.floor(amt / volumeToTsp.gallon);
-  amt -= gallons * volumeToTsp.gallon;
+        // ----- VOLUME (tsp base → gal/qt/cup/tbsp/tsp) -----
+        if (i.unit === "tsp") {
+          let amt = i.amount;
 
-  let cups = Math.floor(amt / volumeToTsp.cup);
-  amt -= cups * volumeToTsp.cup;
+          let gallons = Math.floor(amt / volumeToTsp.gallon);
+          amt -= gallons * volumeToTsp.gallon;
 
-  let tbsp = Math.floor(amt / volumeToTsp.tbsp);
-  amt -= tbsp * volumeToTsp.tbsp;
+          let quarts = Math.floor(amt / volumeToTsp.quart);
+          amt -= quarts * volumeToTsp.quart;
 
-  let tsp = amt;
+          let cups = Math.floor(amt / volumeToTsp.cup);
+          amt -= cups * volumeToTsp.cup;
 
-  let parts = [];
-  if(gallons) parts.push(`${gallons} gal`);
-  if(cups) parts.push(`${cups} cup`);
-  if(tbsp) parts.push(`${tbsp} tbsp`);
-  if(tsp) parts.push(`${toMixedFraction(tsp)} tsp`);
+          let tbsp = Math.floor(amt / volumeToTsp.tbsp);
+          amt -= tbsp * volumeToTsp.tbsp;
 
-  html += `<li>${i.name}: ${parts.join(" + ")}</li>`;
-        } else if(i.unit==="oz"){
-          let lbs=Math.floor(i.amount/weightToOz.lb);i.amount-=lbs*weightToOz.lb;
-          let oz=i.amount;
-          let parts=[];
-          if(lbs) parts.push(`${lbs} lb`);
-          if(oz) parts.push(`${toMixedFraction(oz)} oz`);
-          html+=`<li>${i.name}: ${parts.join(" + ")}</li>`;
-        } else {
-          html+=`<li>${i.name}: ${toMixedFraction(i.amount)} ${i.unit}</li>`;
+          let tsp = amt;
+
+          let parts = [];
+          if (gallons) parts.push(`${gallons} gal`);
+          if (quarts) parts.push(`${quarts} qt`);
+          if (cups) parts.push(`${cups} cup`);
+          if (tbsp) parts.push(`${tbsp} tbsp`);
+          if (tsp) parts.push(`${toMixedFraction(tsp)} tsp`);
+
+          html += `<li>${i.name}: ${parts.join(" + ")}</li>`;
+        }
+
+        // ----- WEIGHT (oz base → lb/oz) -----
+        else if (i.unit === "oz") {
+          let amt = i.amount;
+
+          let lbs = Math.floor(amt / weightToOz.lb);
+          amt -= lbs * weightToOz.lb;
+
+          let oz = amt;
+
+          let parts = [];
+          if (lbs) parts.push(`${lbs} lb`);
+          if (oz) parts.push(`${toMixedFraction(oz)} oz`);
+
+          html += `<li>${i.name}: ${parts.join(" + ")}</li>`;
+        }
+
+        // ----- EVERYTHING ELSE -----
+        else {
+          html += `<li>${i.name}: ${toMixedFraction(i.amount)} ${i.unit}</li>`;
         }
       }
     });
-    if(open) html+="</ul>";
+
+    if (open) html += "</ul>";
     return html;
   }
 
