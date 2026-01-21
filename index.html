@@ -535,15 +535,27 @@ function generateShoppingColumns(allIngredients){
         open=true;
       } else {
         const i=row.item;
-        if(i.unit==="tsp"){
-          let cups=Math.floor(i.amount/volumeToTsp.cup);i.amount-=cups*volumeToTsp.cup;
-          let tbsp=Math.floor(i.amount/volumeToTsp.tbsp);i.amount-=tbsp*volumeToTsp.tbsp;
-          let tsp=i.amount;
-          let parts=[];
-          if(cups) parts.push(`${cups} cup`);
-          if(tbsp) parts.push(`${tbsp} tbsp`);
-          if(tsp) parts.push(`${toMixedFraction(tsp)} tsp`);
-          html+=`<li>${i.name}: ${parts.join(" + ")}</li>`;
+if(i.unit==="tsp"){
+  let amt = i.amount;
+
+  let gallons = Math.floor(amt / volumeToTsp.gallon);
+  amt -= gallons * volumeToTsp.gallon;
+
+  let cups = Math.floor(amt / volumeToTsp.cup);
+  amt -= cups * volumeToTsp.cup;
+
+  let tbsp = Math.floor(amt / volumeToTsp.tbsp);
+  amt -= tbsp * volumeToTsp.tbsp;
+
+  let tsp = amt;
+
+  let parts = [];
+  if(gallons) parts.push(`${gallons} gal`);
+  if(cups) parts.push(`${cups} cup`);
+  if(tbsp) parts.push(`${tbsp} tbsp`);
+  if(tsp) parts.push(`${toMixedFraction(tsp)} tsp`);
+
+  html += `<li>${i.name}: ${parts.join(" + ")}</li>`;
         } else if(i.unit==="oz"){
           let lbs=Math.floor(i.amount/weightToOz.lb);i.amount-=lbs*weightToOz.lb;
           let oz=i.amount;
