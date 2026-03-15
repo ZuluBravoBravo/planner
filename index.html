@@ -56,27 +56,30 @@
     padding-left: 20px;
   }
 
-  /* ---------- SHOPPING LIST ---------- */
-  #shopping-page h2 {
-    text-align: center;
-    margin-bottom: 10px;
-  }
+/* ---------- SHOPPING LIST ---------- */
+#shopping-page h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
 
-  .shopping-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 40px;
-  }
+.shopping-columns {
+  column-count: 2;
+  column-gap: 40px;
+  column-fill: auto;
+}
 
-  .shopping-col h3 {
-    margin: 8px 0 4px 0;
-  }
+.category-block {
+  break-inside: avoid;
+}
 
-  .shopping-col ul {
-    margin: 0 0 10px 0;
-    padding-left: 20px;
-  }
+.shopping-columns h3 {
+  margin: 8px 0 4px 0;
+}
 
+.shopping-columns ul {
+  margin: 0 0 10px 0;
+  padding-left: 20px;
+}
   /* ---------- RECIPE SPACING ---------- */
   .recipe p {
     margin: 2px 0;
