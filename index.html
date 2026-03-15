@@ -70,15 +70,22 @@
 
 .category-block {
   break-inside: avoid;
+  break-before: auto;
+}
+
+.category-block h3 {
+  break-after: avoid;
 }
 
 .shopping-columns h3 {
   margin: 8px 0 4px 0;
 }
 
-.shopping-columns ul {
-  margin: 0 0 10px 0;
-  padding-left: 20px;
+.shopping-columns {
+  column-count: 3;
+  column-gap: 30px;
+  column-fill: auto;
+  height: 9in;
 }
   /* ---------- RECIPE SPACING ---------- */
   .recipe p {
@@ -103,6 +110,13 @@
       width: 100%;
     }
 
+  .shopping-columns {
+    column-count: 3;
+    column-gap: 30px;
+    column-fill: auto;
+    height: 9in;
+  }
+    
     #generate-btn, #print-btn {
       display: none;
     }
