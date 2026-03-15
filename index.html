@@ -56,37 +56,33 @@
     padding-left: 20px;
   }
 
-/* ---------- SHOPPING LIST ---------- */
-#shopping-page h2 {
-  text-align: center;
-  margin-bottom: 10px;
-}
+  /* ---------- SHOPPING LIST ---------- */
+  #shopping-page h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
-.shopping-columns {
-  column-count: 2;
-  column-gap: 40px;
-  column-fill: auto;
-}
+  .shopping-columns {
+    column-count: 3;
+    column-gap: 30px;
+    column-fill: auto;
+    height: 9in;
+  }
 
-.category-block {
-  break-inside: avoid;
-  break-before: auto;
-}
+  .category-block {
+    break-inside: avoid;
+  }
 
-.category-block h3 {
-  break-after: avoid;
-}
+  .category-block h3 {
+    break-after: avoid;
+    margin: 8px 0 4px 0;
+  }
 
-.shopping-columns h3 {
-  margin: 8px 0 4px 0;
-}
+  .shopping-columns ul {
+    margin: 0 0 10px 0;
+    padding-left: 20px;
+  }
 
-.shopping-columns {
-  column-count: 3;
-  column-gap: 30px;
-  column-fill: auto;
-  height: 9in;
-}
   /* ---------- RECIPE SPACING ---------- */
   .recipe p {
     margin: 2px 0;
@@ -110,13 +106,13 @@
       width: 100%;
     }
 
-  .shopping-columns {
-    column-count: 3;
-    column-gap: 30px;
-    column-fill: auto;
-    height: 9in;
-  }
-    
+    .shopping-columns {
+      column-count: 3;
+      column-gap: 30px;
+      column-fill: auto;
+      height: 9in;
+    }
+
     #generate-btn, #print-btn {
       display: none;
     }
@@ -157,10 +153,8 @@
 // Recipes
 // -----------------------------
 const recipes = [
-  
-  
-  
-    {
+
+  {
     name: "Chicken Piccata",
     ingredients: [
       { name: "chicken breasts", amount: 4, unit: "each", category: "meat" },
@@ -173,7 +167,6 @@ const recipes = [
       { name: "honey", amount: 2, unit: "tsp", category: "grocery" },
       { name: "capers", amount: 4, unit: "tbsp", category: "grocery" },
       { name: "parsley", amount: 2, unit: "tbsp", category: "vegetables" }
-
     ],
     instructions: `Serves 5
     PREP
@@ -202,12 +195,9 @@ stir in butter
 season with salt and pepper
 mix in parsely
 return chicken to pan and toss to coat
-
 `
   },
-    
-  
-  
+
   {
     name: "Chicken Pot Pie",
     ingredients: [
@@ -252,9 +242,8 @@ Crimp edges to seal and cut slits on top for steam
 Bake for 45 minutes until crust is golden and filling is bubbling
 Let rest 10 minutes before serving`
   },
-  
-  
-    {
+
+  {
     name: "Herb Lemon Shrip Linguini with Rice and Salad",
     ingredients: [
       { name: "butter", amount: 1, unit: "stick", category: "dairy" },
@@ -273,8 +262,6 @@ Let rest 10 minutes before serving`
       { name: "oregano", amount: 2, unit: "tsp", category: "spices" },
       { name: "parsley", amount: 0.5, unit: "cup", category: "vegetables" },
       { name: "thin spaghetti", amount: 1, unit: "box", category: "grocery" }
-
-      
     ],
     instructions: `Serves 4
 PREP
@@ -302,17 +289,14 @@ Cook for 1 minute
 Stir in lemon juice and cook 1 minute
 
 Toss with hot pasta`
-  },  
-  
+  },
 
-  
   {
     name: "Lasagna - Meat",
     ingredients: [
-
       { name: "tomato sauce", amount: 48, unit: "oz", category: "cans" },
       { name: "beef", amount: 1.5, unit: "lb", category: "meat" },
-      { name: "onion", amount: 1, unit: "each", category: "vegetables" },  
+      { name: "onion", amount: 1, unit: "each", category: "vegetables" },
       { name: "olive oil", amount: 2, unit: "tbsp", category: "grocery" },
       { name: "garlic", amount: 2, unit: "cloves", category: "vegetables" },
       { name: "ricotta", amount: 2, unit: "lb", category: "dairy" },
@@ -320,9 +304,7 @@ Toss with hot pasta`
       { name: "eggs", amount: 3, unit: "each", category: "dairy" },
       { name: "parsley", amount: 0.5, unit: "tbsp", category: "vegetables" },
       { name: "mozzarella", amount: 2, unit: "cups", category: "dairy" },
-      { name: "Oven Ready lasagna", amount: 1, unit: "package", category: "grocery" }, 
-    
-    
+      { name: "Oven Ready lasagna", amount: 1, unit: "package", category: "grocery" }
     ],
     instructions: `PREP
 Preheat oven to 350 degrees
@@ -349,18 +331,14 @@ Cover with aluminum foil
 bake at 350 degrees for 40 minutes
 Remove foil
 bake for another 10 to 15 minutes`
-
   },
-  
-  
-  
-    {
+
+  {
     name: "Lasagna - vegetarian",
     ingredients: [
-
       { name: "tomato sauce", amount: 48, unit: "oz", category: "cans" },
       { name: "spinach", amount: 2, unit: "cups", category: "meat" },
-      { name: "onion", amount: 1, unit: "each", category: "vegetables" },  
+      { name: "onion", amount: 1, unit: "each", category: "vegetables" },
       { name: "olive oil", amount: 2, unit: "tbsp", category: "grocery" },
       { name: "garlic", amount: 2, unit: "cloves", category: "vegetables" },
       { name: "ricotta", amount: 2, unit: "lb", category: "dairy" },
@@ -368,9 +346,7 @@ bake for another 10 to 15 minutes`
       { name: "eggs", amount: 3, unit: "each", category: "dairy" },
       { name: "parsley", amount: 0.5, unit: "tbsp", category: "vegetables" },
       { name: "mozzarella", amount: 2, unit: "cups", category: "dairy" },
-      { name: "oven Ready lasagna", amount: 1, unit: "package", category: "grocery" }, 
-    
-    
+      { name: "oven Ready lasagna", amount: 1, unit: "package", category: "grocery" }
     ],
     instructions: `PREP
 Preheat oven to 350 degrees
@@ -396,9 +372,8 @@ Cover with aluminum foil
 bake at 350 degrees for 40 minutes
 Remove foil
 bake for another 10 to 15 minutes`
-
   },
-  
+
   {
     name: "Lentil Soup",
     ingredients: [
@@ -435,11 +410,7 @@ Increase the heat to high and bring just to a boil
 Cover, reduce heat to low, and simmer for 35 to 40 minutes until the lentils are tender
 Serve immediately`
   },
-  
-  
-    
-  
-  
+
   {
     name: "Winter Minestrone Soup",
     ingredients: [
@@ -454,8 +425,8 @@ Serve immediately`
       { name: "cannellini beans", amount: 1, unit: "can", category: "cans" },
       { name: "red wine vinegar", amount: 2, unit: "tsp", category: "grocery" },
       { name: "swiss chard", amount: 1.5, unit: "bunch", category: "vegetables" },
-      { name: "short pasta", amount: 2, unit: "cups", category: "Grains" },
-      { name: "grated parmesan cheese", amount: 1, unit: "cup", category: "Dairy" },
+      { name: "short pasta", amount: 2, unit: "cups", category: "grains" },
+      { name: "grated parmesan cheese", amount: 1, unit: "cup", category: "dairy" },
       { name: "salt", amount: 1, unit: "pinch", category: "spices" },
       { name: "pepper", amount: 1, unit: "pinch", category: "spices" }
     ],
@@ -481,24 +452,23 @@ Prepare the pasta to al dente following package directions
 Divide pasta evenly between bowls
 Pour soup over the pasta and garnish with cheese`
   },
-  
-  
+
   {
-  name: "Corned Beef & Cabbage",
-  ingredients: [
-    { name: "corned beef brisket with spice packet", amount: 3, unit: "lb", category: "meat" },
-    { name: "water", amount: 4, unit: "cups", category: "grocery" },
-    { name: "Guinness stout", amount: 1, unit: "cup", category: "grocery" },
-    { name: "garlic cloves, smashed", amount: 4, unit: "each", category: "vegetables" },
-    { name: "yellow onion, quartered", amount: 1, unit: "each", category: "vegetables" },
-    { name: "bay leaves", amount: 2, unit: "each", category: "spices" },
-    { name: "whole black peppercorns", amount: 1, unit: "tsp", category: "spices" },
-    { name: "small red potatoes", amount: 1.5, unit: "lb", category: "vegetables" },
-    { name: "large carrots", amount: 4, unit: "each", category: "vegetables" },
-    { name: "green cabbage", amount: 0.5, unit: "head", category: "vegetables" },
-    { name: "whole grain or yellow mustard", amount: 2, unit: "tbsp", category: "grocery" }
-  ],
-  instructions: `PREP
+    name: "Corned Beef & Cabbage",
+    ingredients: [
+      { name: "corned beef brisket with spice packet", amount: 3, unit: "lb", category: "meat" },
+      { name: "water", amount: 4, unit: "cups", category: "grocery" },
+      { name: "Guinness stout", amount: 1, unit: "cup", category: "grocery" },
+      { name: "garlic cloves, smashed", amount: 4, unit: "each", category: "vegetables" },
+      { name: "yellow onion, quartered", amount: 1, unit: "each", category: "vegetables" },
+      { name: "bay leaves", amount: 2, unit: "each", category: "spices" },
+      { name: "whole black peppercorns", amount: 1, unit: "tsp", category: "spices" },
+      { name: "small red potatoes", amount: 1.5, unit: "lb", category: "vegetables" },
+      { name: "large carrots", amount: 4, unit: "each", category: "vegetables" },
+      { name: "green cabbage", amount: 0.5, unit: "head", category: "vegetables" },
+      { name: "whole grain or yellow mustard", amount: 2, unit: "tbsp", category: "grocery" }
+    ],
+    instructions: `PREP
 Rinse the corned beef brisket under cold water and pat dry
 Quarter the yellow onion
 Smash the garlic cloves
@@ -522,60 +492,35 @@ Replace lid and continue cooking on LOW for 1 hour until cabbage is tender
 Remove brisket and let rest on a cutting board for 10 minutes
 Slice brisket against the grain into 1/4-inch thick pieces
 Arrange on a platter with the vegetables and serve with mustard on the side`
-},
-  
+  },
 
-  
-  
   {
     name: "Brown Sugar Chicken",
     ingredients: [
-
       { name: "chicken", amount: 2, unit: "lb", category: "meat" },
       { name: "avacado Oil", amount: 1, unit: "each", category: "grocery" },
       { name: "salt", amount: 3, unit: "tsp", category: "grocery" },
-      { name: "garlic", amount: 4, unit: "clove", category: "rocery" },
+      { name: "garlic", amount: 4, unit: "clove", category: "grocery" },
       { name: "brown sugar", amount: 1, unit: "cup", category: "grocery" },
       { name: "teriyaki sauce", amount: 1, unit: "each", category: "grocery" },
       { name: "dried chives", amount: 1, unit: "each", category: "spices" },
-      { name: "cayenne pepper", amount: 1, unit: "each", category: "spices" },
-      
+      { name: "cayenne pepper", amount: 1, unit: "each", category: "spices" }
     ],
     instructions: `PREP
 ENTER INSTRUCTIONS HERE`
-
-
-
   },
-  
 
-
-
-  
   {
     name: "recipie 6",
     ingredients: [
-
-      { name: "stuff", amount: 0, unit: "each", category: "food" },
-
-
-
-      
+      { name: "stuff", amount: 0, unit: "each", category: "food" }
     ],
     instructions: `PREP
 ENTER INSTRUCTIONS HERE`
-
-
-
   },
 
-
-
-
-
-  
   {
-    name: "Leftovers and more stuff.......................................",
+    name: "Leftovers",
     ingredients: [
       { name: "Leftovers", amount: 0, unit: "each", category: "Fridge" }
     ],
@@ -584,11 +529,6 @@ Get out of fridge
 Microwave
 Eat`
   }
-
-
-
-
-
 
 ];
 
@@ -612,174 +552,111 @@ const standaloneItems = [
   { name: "tomatos", amount: 1, unit: "box", category: "vegetables" },
   { name: "lettuce", amount: 1, unit: "box", category: "vegetables" },
   { name: "avacados", amount: 1, unit: "box", category: "vegetables" },
-  { name: "red onion", amount: 1, unit: "box", category: "vegetables" },
-
-
-
-
-  
-  ];
+  { name: "red onion", amount: 1, unit: "box", category: "vegetables" }
+];
 
 // -----------------------------
 // Unit conversion
 // -----------------------------
-const volumeToTsp = { tsp:1, tbsp:3, cup:48, pint:96, quart:192, gallon: 768 };
-const weightToOz = { oz:1, lb:16 };
+const volumeToTsp = { tsp:1, tbsp:3, cup:48, pint:96, quart:192, gallon:768 };
+const weightToOz  = { oz:1, lb:16 };
 
 // -----------------------------
 // Fraction helpers
 // -----------------------------
-function gcd(a,b){return b===0?a:gcd(b,a%b);}
+function gcd(a,b){ return b===0 ? a : gcd(b, a%b); }
 function toMixedFraction(value){
-  const whole=Math.floor(value),frac=value-whole;
-  if(frac===0) return `${whole}`;
-  const denominators=[2,3,4,6,8,12,16];
-  let bestNumerator=1,bestDenominator=2,minError=Infinity;
+  const whole = Math.floor(value), frac = value - whole;
+  if(frac === 0) return `${whole}`;
+  const denominators = [2,3,4,6,8,12,16];
+  let bestNumerator=1, bestDenominator=2, minError=Infinity;
   for(let d of denominators){
-    let n=Math.round(frac*d),error=Math.abs(frac-n/d);
-    if(error<minError && n>0){bestNumerator=n;bestDenominator=d;minError=error;}
+    let n = Math.round(frac*d), error = Math.abs(frac - n/d);
+    if(error < minError && n > 0){ bestNumerator=n; bestDenominator=d; minError=error; }
   }
-  const divisor=gcd(bestNumerator,bestDenominator);
-  const numerator=bestNumerator/divisor;
-  const denominator=bestDenominator/divisor;
-  if(whole===0) return `${numerator}/${denominator}`;
+  const divisor     = gcd(bestNumerator, bestDenominator);
+  const numerator   = bestNumerator  / divisor;
+  const denominator = bestDenominator/ divisor;
+  if(whole === 0) return `${numerator}/${denominator}`;
   return `${whole} ${numerator}/${denominator}`;
 }
+
 // -----------------------------
 // Shopping list builder
 // -----------------------------
 function generateShoppingColumns(allIngredients){
-  const totals = {};
 
+  // --- aggregate totals ---
+  const totals = {};
   allIngredients.forEach(ing => {
     let amount = ing.amount;
-    let unit = ing.unit.toLowerCase();
+    let unit   = ing.unit.toLowerCase();
 
-    if (volumeToTsp[unit]) {
-      amount *= volumeToTsp[unit];
-      unit = "tsp";
-    } else if (weightToOz[unit]) {
-      amount *= weightToOz[unit];
-      unit = "oz";
-    }
+    if(volumeToTsp[unit]){ amount *= volumeToTsp[unit]; unit = "tsp"; }
+    else if(weightToOz[unit]){ amount *= weightToOz[unit]; unit = "oz"; }
 
-    if (!totals[ing.name]) {
-      totals[ing.name] = { amount: 0, unit, category: ing.category || "Other" };
+    if(!totals[ing.name]){
+      totals[ing.name] = { amount:0, unit, category: ing.category || "Other" };
     }
     totals[ing.name].amount += amount;
   });
 
+  // --- group by category ---
   const categories = {};
-  for (let name in totals) {
+  for(let name in totals){
     const { amount, unit, category } = totals[name];
-    if (!categories[category]) categories[category] = [];
-    categories[category].push({ name, amount, unit });
+    const cat = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+    if(!categories[cat]) categories[cat] = [];
+    categories[cat].push({ name, amount, unit });
   }
 
   const orderedCats = Object.keys(categories).sort();
   orderedCats.forEach(cat => {
-    categories[cat].sort((a, b) => a.name.localeCompare(b.name));
+    categories[cat].sort((a,b) => a.name.localeCompare(b.name));
   });
 
-  const rows = [];
-  orderedCats.forEach(cat => {
-    rows.push({ type: "header", text: cat });
-    categories[cat].forEach(item => {
-      rows.push({ type: "item", item });
-    });
-  });
-
-const midpoint = Math.ceil(rows.length / 2);
-const col1 = [];
-const col2 = [];
-
-let i = 0;
-while (i < rows.length) {
-  // Try not to split right before a header
-  if (i >= midpoint && rows[i].type === "header") break;
-  col1.push(rows[i]);
-  i++;
-}
-
-while (i < rows.length) {
-  col2.push(rows[i]);
-  i++;
-}
-
-
-  function renderColumn(col){
-    let html = "";
-    let open = false;
-
-    col.forEach(row => {
-      if (row.type === "header") {
-        if (open) html += "</ul>";
-        html += `<h3>${row.text}</h3><ul>`;
-        open = true;
-      } else {
-        const i = row.item;
-
-        // ----- VOLUME (tsp base → gal/qt/cup/tbsp/tsp) -----
-        if (i.unit === "tsp") {
-          let amt = i.amount;
-
-          let gallons = Math.floor(amt / volumeToTsp.gallon);
-          amt -= gallons * volumeToTsp.gallon;
-
-          let quarts = Math.floor(amt / volumeToTsp.quart);
-          amt -= quarts * volumeToTsp.quart;
-
-          let cups = Math.floor(amt / volumeToTsp.cup);
-          amt -= cups * volumeToTsp.cup;
-
-          let tbsp = Math.floor(amt / volumeToTsp.tbsp);
-          amt -= tbsp * volumeToTsp.tbsp;
-
-          let tsp = amt;
-
-          let parts = [];
-          if (gallons) parts.push(`${gallons} gal`);
-          if (quarts) parts.push(`${quarts} qt`);
-          if (cups) parts.push(`${cups} cup`);
-          if (tbsp) parts.push(`${tbsp} tbsp`);
-          if (tsp) parts.push(`${toMixedFraction(tsp)} tsp`);
-
-          html += `<li>${i.name}: ${parts.join(" + ")}</li>`;
-        }
-
-        // ----- WEIGHT (oz base → lb/oz) -----
-        else if (i.unit === "oz") {
-          let amt = i.amount;
-
-          let lbs = Math.floor(amt / weightToOz.lb);
-          amt -= lbs * weightToOz.lb;
-
-          let oz = amt;
-
-          let parts = [];
-          if (lbs) parts.push(`${lbs} lb`);
-          if (oz) parts.push(`${toMixedFraction(oz)} oz`);
-
-          html += `<li>${i.name}: ${parts.join(" + ")}</li>`;
-        }
-
-        // ----- EVERYTHING ELSE -----
-        else {
-          html += `<li>${i.name}: ${toMixedFraction(i.amount)} ${i.unit}</li>`;
-        }
-      }
-    });
-
-    if (open) html += "</ul>";
-    return html;
+  // --- render a single item ---
+  function renderItem(i){
+    if(i.unit === "tsp"){
+      let amt = i.amount;
+      let gallons = Math.floor(amt / volumeToTsp.gallon); amt -= gallons * volumeToTsp.gallon;
+      let quarts  = Math.floor(amt / volumeToTsp.quart);  amt -= quarts  * volumeToTsp.quart;
+      let cups    = Math.floor(amt / volumeToTsp.cup);    amt -= cups    * volumeToTsp.cup;
+      let tbsp    = Math.floor(amt / volumeToTsp.tbsp);   amt -= tbsp    * volumeToTsp.tbsp;
+      let tsp     = amt;
+      let parts   = [];
+      if(gallons) parts.push(`${gallons} gal`);
+      if(quarts)  parts.push(`${quarts} qt`);
+      if(cups)    parts.push(`${cups} cup`);
+      if(tbsp)    parts.push(`${tbsp} tbsp`);
+      if(tsp)     parts.push(`${toMixedFraction(tsp)} tsp`);
+      return `<li>${i.name}: ${parts.join(" + ")}</li>`;
+    } else if(i.unit === "oz"){
+      let amt  = i.amount;
+      let lbs  = Math.floor(amt / weightToOz.lb); amt -= lbs * weightToOz.lb;
+      let oz   = amt;
+      let parts = [];
+      if(lbs) parts.push(`${lbs} lb`);
+      if(oz)  parts.push(`${toMixedFraction(oz)} oz`);
+      return `<li>${i.name}: ${parts.join(" + ")}</li>`;
+    } else {
+      return `<li>${i.name}: ${toMixedFraction(i.amount)} ${i.unit}</li>`;
+    }
   }
+
+  // --- build HTML ---
+  let html = "";
+  orderedCats.forEach(cat => {
+    html += `<div class="category-block"><h3>${cat}</h3><ul>`;
+    categories[cat].forEach(item => { html += renderItem(item); });
+    html += `</ul></div>`;
+  });
 
   return `
     <div id="shopping-page" class="print-page">
       <h2>Shopping List</h2>
-      <div class="shopping-grid">
-        <div class="shopping-col">${renderColumn(col1)}</div>
-        <div class="shopping-col">${renderColumn(col2)}</div>
+      <div class="shopping-columns">
+        ${html}
       </div>
     </div>
   `;
@@ -788,65 +665,65 @@ while (i < rows.length) {
 // -----------------------------
 // UI Setup
 // -----------------------------
-document.addEventListener("DOMContentLoaded",()=>{
-  const days=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+document.addEventListener("DOMContentLoaded", () => {
+  const days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
 
-  days.forEach(day=>{
-    const select=document.getElementById(day);
-    recipes.forEach(r=>{
-      const option=document.createElement("option");
-      option.value=r.name;
-      option.textContent=r.name;
+  days.forEach(day => {
+    const select = document.getElementById(day);
+    recipes.forEach(r => {
+      const option = document.createElement("option");
+      option.value       = r.name;
+      option.textContent = r.name;
       select.appendChild(option);
     });
   });
 
-  const boxContainer=document.getElementById("standalone-checkboxes");
-  standaloneItems.forEach((item,i)=>{
-    const label=document.createElement("label");
-    label.style.display="block";
-    const cb=document.createElement("input");
-    cb.type="checkbox";
-    cb.value=i;
+  const boxContainer = document.getElementById("standalone-checkboxes");
+  standaloneItems.forEach((item, i) => {
+    const label = document.createElement("label");
+    label.style.display = "block";
+    const cb = document.createElement("input");
+    cb.type  = "checkbox";
+    cb.value = i;
     label.appendChild(cb);
     label.appendChild(document.createTextNode(` ${item.name} (${item.unit})`));
     boxContainer.appendChild(label);
   });
 
-  document.getElementById("generate-btn").addEventListener("click",()=>{
-    const selectedRecipes=[];
-    days.forEach(day=>{
-      const recipe=recipes.find(r=>r.name===document.getElementById(day).value);
+  document.getElementById("generate-btn").addEventListener("click", () => {
+    const selectedRecipes = [];
+    days.forEach(day => {
+      const recipe = recipes.find(r => r.name === document.getElementById(day).value);
       if(recipe) selectedRecipes.push(recipe);
     });
 
-    const checkedStandalone=Array.from(
+    const checkedStandalone = Array.from(
       document.querySelectorAll("#standalone-checkboxes input:checked")
-    ).map(cb=>standaloneItems[cb.value]);
+    ).map(cb => standaloneItems[cb.value]);
 
-    const allIngredients=[
-      ...selectedRecipes.flatMap(r=>r.ingredients),
+    const allIngredients = [
+      ...selectedRecipes.flatMap(r => r.ingredients),
       ...checkedStandalone
     ];
 
-    document.getElementById("shopping-list").innerHTML=
+    document.getElementById("shopping-list").innerHTML =
       generateShoppingColumns(allIngredients);
 
-    const recipesDiv=document.getElementById("recipes");
-    recipesDiv.innerHTML="";
-    selectedRecipes.forEach(r=>{
-      const div=document.createElement("div");
-      div.className="recipe print-page";
-      let html=`<h2>${r.name}</h2><h3>Ingredients</h3><ul>`;
-      r.ingredients.forEach(ing=>{
-        html+=`<li>${toMixedFraction(ing.amount)} ${ing.unit} ${ing.name}</li>`;
+    const recipesDiv = document.getElementById("recipes");
+    recipesDiv.innerHTML = "";
+    selectedRecipes.forEach(r => {
+      const div = document.createElement("div");
+      div.className = "recipe print-page";
+      let html = `<h2>${r.name}</h2><h3>Ingredients</h3><ul>`;
+      r.ingredients.forEach(ing => {
+        html += `<li>${toMixedFraction(ing.amount)} ${ing.unit} ${ing.name}</li>`;
       });
-      html+="</ul><h3>Instructions</h3>";
-      r.instructions.split("\n").forEach(line=>{
-        if(line.trim()==="") html+="<p>&nbsp;</p>";
-        else html+=`<p>${line}</p>`;
+      html += "</ul><h3>Instructions</h3>";
+      r.instructions.split("\n").forEach(line => {
+        if(line.trim() === "") html += "<p>&nbsp;</p>";
+        else html += `<p>${line}</p>`;
       });
-      div.innerHTML=html;
+      div.innerHTML = html;
       recipesDiv.appendChild(div);
     });
   });
